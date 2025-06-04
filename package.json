@@ -10,7 +10,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
   "devDependencies": {
     "@eslint/js": "^9.28.0",
     "eslint": "^8.57.1",
@@ -18,5 +18,10 @@
     "eslint-plugin-import": "^2.31.0",
     "globals": "^16.2.0",
     "nodemon": "^3.1.10"
+  },
+  "dependencies": {
+    "@hapi/hapi": "^21.4.0",
+    "dotenv": "^16.5.0",
+    "nanoid": "^5.1.5"
   }
 }
