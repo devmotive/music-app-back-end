@@ -1,6 +1,7 @@
 class SongsHandler {
-  constructor(service) {
+  constructor(service, validator) {
     this._service = service;
+    this._validator = validator;
 
     this.postSongHandler = this.postSongHandler.bind(this);
     this.getSongsHandler = this.getSongsHandler.bind(this);
@@ -10,36 +11,28 @@ class SongsHandler {
   }
 
   postSongHandler(request, h) {
-    try {
-      const {
-        title = 'untitled', year, genre, performer, duration, albumId,
-      } = request.payload;
-      const songId = this._service.addSong({
-        title,
-        year,
-        genre,
-        performer,
-        duration,
-        albumId,
-      });
+    this._validator.validateSongPayload(request.payload);
+    const {
+      title = 'untitled', year, genre, performer, duration, albumId,
+    } = request.payload;
+    const songId = this._service.addSong({
+      title,
+      year,
+      genre,
+      performer,
+      duration,
+      albumId,
+    });
 
-      const response = h.response({
-        status: 'success',
-        message: 'Song added successfully',
-        data: {
-          songId,
-        },
-      });
-      response.code(201);
-      return response;
-    } catch (error) {
-      const response = h.response({
-        status: 'fail',
-        message: error.message,
-      });
-      response.code(400);
-      return response;
-    }
+    const response = h.response({
+      status: 'success',
+      message: 'Song added successfully',
+      data: {
+        songId,
+      },
+    });
+    response.code(201);
+    return response;
   }
 
   getSongsHandler() {
@@ -52,62 +45,36 @@ class SongsHandler {
     };
   }
 
-  getSongByIdHandler(request, h) {
-    try {
-      const { id } = request.params;
-      const song = this._service.getSongById(id);
-      return {
-        status: 'success',
-        data: {
-          song,
-        },
-      };
-    } catch (error) {
-      const response = h.response({
-        status: 'fail',
-        message: error.message,
-      });
-      response.code(404);
-      return response;
-    }
+  getSongByIdHandler(request) {
+    const { id } = request.params;
+    const song = this._service.getSongById(id);
+    return {
+      status: 'success',
+      data: {
+        song,
+      },
+    };
   }
 
-  putSongByIdHandler(request, h) {
-    try {
-      const { id } = request.params;
-      this._service.editSongById(id, request.payload);
+  putSongByIdHandler(request) {
+    this._validator.validateSongPayload(request.payload);
+    const { id } = request.params;
+    this._service.editSongById(id, request.payload);
 
-      return {
-        status: 'success',
-        message: 'Song updated successfully',
-      };
-    } catch (error) {
-      const response = h.response({
-        status: 'fail',
-        message: error.message,
-      });
-      response.code(404);
-      return response;
-    }
+    return {
+      status: 'success',
+      message: 'Song updated successfully',
+    };
   }
 
-  deleteSongByIdHandler(request, h) {
-    try {
-      const { id } = request.params;
-      this._service.deleteSongById(id);
+  deleteSongByIdHandler(request) {
+    const { id } = request.params;
+    this._service.deleteSongById(id);
 
-      return {
-        status: 'success',
-        message: 'Song deleted successfully',
-      };
-    } catch (error) {
-      const response = h.response({
-        status: 'fail',
-        message: error.message,
-      });
-      response.code(404);
-      return response;
-    }
+    return {
+      status: 'success',
+      message: 'Song deleted successfully',
+    };
   }
 }
 
