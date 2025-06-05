@@ -35,8 +35,9 @@ class SongsHandler {
     return response;
   }
 
-  getSongsHandler() {
-    const songs = this._service.getAllSongs();
+  getSongsHandler(request) {
+    const { title, performer } = request.query;
+    const songs = this._service.getAllSongs({ title, performer });
     return {
       status: 'success',
       data: {

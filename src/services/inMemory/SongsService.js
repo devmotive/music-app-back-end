@@ -35,8 +35,25 @@ class SongsService {
     return id;
   }
 
-  getAllSongs() {
-    return this._songs;
+  getAllSongs({ title, performer } = {}) {
+    let filteredSongs = this._songs;
+
+    if (title) {
+      // eslint-disable-next-line max-len
+      filteredSongs = filteredSongs.filter((song) => song.title.toLowerCase().includes(title.toLowerCase()));
+    }
+
+    if (performer) {
+      filteredSongs = filteredSongs.filter((song) => song.performer.toLowerCase().includes(performer.toLowerCase()));
+    }
+
+    return filteredSongs.map(
+      ({ id, title: songTitle, performer: songPerformer }) => ({
+        id,
+        title: songTitle,
+        performer: songPerformer,
+      }),
+    );
   }
 
   getSongsByAlbumId(albumId) {
