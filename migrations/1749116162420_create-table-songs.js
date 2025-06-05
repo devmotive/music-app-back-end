@@ -32,11 +32,9 @@ export const up = (pgm) => {
     },
     duration: {
       type: 'INTEGER',
-      notNull: false,
     },
-    albumId: {
+    album_id: {
       type: 'VARCHAR(50)',
-      notNull: false,
       references: 'albums',
       onDelete: 'CASCADE',
       onUpdate: 'CASCADE',
