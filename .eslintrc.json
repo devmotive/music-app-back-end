@@ -12,7 +12,8 @@
   "rules": {
     "no-console": "off",
     "linebreak-style": "off",
-    "no-underscore-dangle": "off"
+    "no-underscore-dangle": "off",
+    "max-len": "off"
     // "import/extensions": [
     //   "error",
     //   "ignorePackages",
