@@ -12,13 +12,14 @@
   "rules": {
     "no-console": "off",
     "linebreak-style": "off",
-    "import/extensions": [
-      "error",
-      "ignorePackages",
-      {
-        "js": "always",
-        "mjs": "always"
-      }
-    ]
+    "no-underscore-dangle": "off"
+    // "import/extensions": [
+    //   "error",
+    //   "ignorePackages",
+    //   {
+    //     "js": "always",
+    //     "mjs": "always"
+    //   }
+    // ]
   }
 }
