@@ -13,7 +13,8 @@
     "no-console": "off",
     "linebreak-style": "off",
     "no-underscore-dangle": "off",
-    "max-len": "off"
+    "max-len": "off",
+    "camelcase": "off"
     // "import/extensions": [
     //   "error",
     //   "ignorePackages",
