@@ -39,6 +39,12 @@ class SongsService {
     return this._songs;
   }
 
+  getSongsByAlbumId(albumId) {
+    return this._songs
+      .filter((song) => song.albumId === albumId)
+      .map(({ id, title, performer }) => ({ id, title, performer }));
+  }
+
   getSongById(id) {
     const song = this._songs.find((s) => s.id === id);
     if (!song) {
