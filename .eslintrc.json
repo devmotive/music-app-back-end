@@ -15,13 +15,5 @@
     "no-underscore-dangle": "off",
     "max-len": "off",
     "camelcase": "off"
-    // "import/extensions": [
-    //   "error",
-    //   "ignorePackages",
-    //   {
-    //     "js": "always",
-    //     "mjs": "always"
-    //   }
-    // ]
   }
 }
