@@ -8,6 +8,9 @@ class AlbumsHandler {
     this.getAlbumByIdHandler = this.getAlbumByIdHandler.bind(this);
     this.putAlbumByIdHandler = this.putAlbumByIdHandler.bind(this);
     this.deleteAlbumByIdHandler = this.deleteAlbumByIdHandler.bind(this);
+    this.likeAlbumHandler = this.likeAlbumHandler.bind(this);
+    this.unlikeAlbumHandler = this.unlikeAlbumHandler.bind(this);
+    this.getLikesCountForAlbumHandler = this.getLikesCountForAlbumHandler.bind(this);
   }
 
   async postAlbumHandler(request, h) {
@@ -60,6 +63,51 @@ class AlbumsHandler {
     return {
       status: 'success',
       message: 'Album deleted successfully',
+    };
+  }
+
+  async likeAlbumHandler(request, h) {
+    const { id } = request.params;
+    const { id: credentialId } = request.auth.credentials;
+
+    const albumLikeId = await this._service.likeAlbum(credentialId, id);
+
+    const response = h.response({
+      status: 'success',
+      message: 'Album liked successfully',
+      data: {
+        albumLikeId,
+      },
+    });
+    response.code(201);
+    return response;
+  }
+
+  async unlikeAlbumHandler(request, h) {
+    const { id } = request.params;
+    const { id: credentialId } = request.auth.credentials;
+
+    await this._service.unlikeAlbum(credentialId, id);
+
+    const response = h.response({
+      status: 'success',
+      message: 'Album unliked successfully',
+    });
+    response.code(200);
+    return response;
+  }
+
+  async getLikesCountForAlbumHandler(request) {
+    const { id } = request.params;
+    const like = await this._service.getLikesCountForAlbum(id);
+
+    console.log('Like count for album:', like); // Add this line for debugging
+
+    return {
+      status: 'success',
+      data: {
+        like,
+      },
     };
   }
 }
