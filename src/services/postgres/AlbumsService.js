@@ -12,11 +12,10 @@ class AlbumsService {
   async addAlbum({ name, year }) {
     const id = `album-${nanoid(16)}`;
     const createdAt = new Date().toISOString();
-    const updatedAt = createdAt;
 
     const query = {
-      text: 'INSERT INTO albums VALUES ($1, $2, $3, $4, $5) RETURNING id',
-      values: [id, name, year, createdAt, updatedAt],
+      text: 'INSERT INTO albums VALUES ($1, $2, $3, $4, $4) RETURNING id',
+      values: [id, name, year, createdAt],
     };
 
     const result = await this._pool.query(query);
@@ -40,7 +39,7 @@ class AlbumsService {
       throw new NotFoundError('Album not found');
     }
 
-    return result.rows.map(mapDBToAlbumModel)[0];
+    return mapDBToAlbumModel(result.rows[0]);
   }
 
   async editAlbumById(id, { name, year }) {
