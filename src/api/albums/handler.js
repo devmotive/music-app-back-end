@@ -99,18 +99,22 @@ class AlbumsHandler {
     return response;
   }
 
-  async getLikesCountForAlbumHandler(request) {
+  async getLikesCountForAlbumHandler(request, h) {
     const { id } = request.params;
-    const like = await this._service.getLikesCountForAlbum(id);
+    const { likes, source } = await this._service.getLikesCountForAlbum(id);
 
-    console.log('Like count for album:', like); // Add this line for debugging
-
-    return {
+    const response = h.response({
       status: 'success',
       data: {
-        like,
+        likes,
       },
-    };
+    });
+
+    if (source === 'cache') {
+      response.header('X-Data-Source', 'cache');
+    }
+
+    return response;
   }
 
   async postCoverAlbumHandler(request, h) {

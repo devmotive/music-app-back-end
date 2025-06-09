@@ -5,8 +5,9 @@ const NotFoundError = require('../../exceptions/NotFoundError');
 const { mapDBToAlbumModel } = require('../../utils');
 
 class AlbumsService {
-  constructor() {
+  constructor(cacheService) {
     this._pool = new Pool();
+    this._cacheService = cacheService;
   }
 
   async addAlbum({ name, year }) {
@@ -105,6 +106,7 @@ class AlbumsService {
       throw new InvariantError('Failed to like album');
     }
 
+    await this._cacheService.delete(`albums:${albumId}`);
     return result.rows[0].id;
   }
 
@@ -120,18 +122,30 @@ class AlbumsService {
       throw new InvariantError('Failed to unlike album');
     }
 
+    await this._cacheService.delete(`albums:${albumId}`);
     return result.rows[0].id;
   }
 
   async getLikesCountForAlbum(albumId) {
-    const query = {
-      text: 'SELECT COUNT(*) FROM user_album_likes WHERE album_id = $1',
-      values: [albumId],
-    };
+    try {
+      const result = await this._cacheService.get(`albums:${albumId}`);
+      return { likes: JSON.parse(result), source: 'cache' };
+    } catch (error) {
+      const query = {
+        text: 'SELECT COUNT(*) FROM user_album_likes WHERE album_id = $1',
+        values: [albumId],
+      };
 
-    const result = await this._pool.query(query);
+      const result = await this._pool.query(query);
+      const likesCount = parseInt(result.rows[0].count, 10);
 
-    return parseInt(result.rows[0].count, 10);
+      await this._cacheService.set(
+        `albums:${albumId}`,
+        JSON.stringify(likesCount),
+      );
+
+      return { likes: likesCount, source: 'db' };
+    }
   }
 
   async editAlbumCoverUrl(albumId, coverUrl) {
