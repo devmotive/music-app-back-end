@@ -22,6 +22,10 @@ export const up = (pgm) => {
       type: 'INTEGER',
       notNull: true,
     },
+    cover_url: {
+      type: 'TEXT',
+      default: null,
+    },
     created_at: {
       type: 'TIMESTAMP',
       notNull: true,
