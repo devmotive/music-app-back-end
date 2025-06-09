@@ -2,6 +2,7 @@ require('dotenv').config();
 
 const Hapi = require('@hapi/hapi');
 const Jwt = require('@hapi/jwt');
+
 const ClientError = require('./exceptions/ClientError');
 
 // albums
@@ -29,6 +30,11 @@ const authentications = require('./api/authentications');
 const AuthenticationsService = require('./services/postgres/AuthenticationsService');
 const TokenManager = require('./tokenize/TokenManager');
 const AuthenticationsValidator = require('./validator/authentications');
+
+// Exports
+const _exports = require('./api/exports');
+const ProducerService = require('./services/rabbitmq/ProducerService');
+const ExportsValidator = require('./validator/exports');
 
 const init = async () => {
   const albumsService = new AlbumsService();
@@ -89,8 +95,6 @@ const init = async () => {
       plugin: playlists,
       options: {
         service: playlistsService,
-        // albumsService,
-        // songsService,
         validator: PlaylistsValidator,
       },
     },
@@ -108,6 +112,14 @@ const init = async () => {
         usersService,
         tokenManager: TokenManager,
         validator: AuthenticationsValidator,
+      },
+    },
+    {
+      plugin: _exports,
+      options: {
+        service: ProducerService,
+        playlistsService,
+        validator: ExportsValidator,
       },
     },
   ]);
