@@ -14,7 +14,7 @@ class AlbumsService {
     const createdAt = new Date().toISOString();
 
     const query = {
-      text: 'INSERT INTO albums VALUES ($1, $2, $3, $4, $4) RETURNING id',
+      text: 'INSERT INTO albums (id, name, year, created_at, updated_at) VALUES ($1, $2, $3, $4, $4) RETURNING id',
       values: [id, name, year, createdAt],
     };
 
@@ -132,6 +132,21 @@ class AlbumsService {
     const result = await this._pool.query(query);
 
     return parseInt(result.rows[0].count, 10);
+  }
+
+  async editAlbumCoverUrl(albumId, coverUrl) {
+    const updatedAt = new Date().toISOString();
+
+    const query = {
+      text: 'UPDATE albums SET cover_url = $1, updated_at = $2 WHERE id = $3 RETURNING id',
+      values: [coverUrl, updatedAt, albumId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (result.rowCount === 0) {
+      throw new Error('Failed to update album cover URL. Album not found.');
+    }
   }
 }
 

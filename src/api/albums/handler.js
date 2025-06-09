@@ -1,7 +1,8 @@
 class AlbumsHandler {
-  constructor(service, songsService, validator) {
+  constructor(service, songsService, storageService, validator) {
     this._service = service;
     this._songsService = songsService;
+    this._storageService = storageService;
     this._validator = validator;
 
     this.postAlbumHandler = this.postAlbumHandler.bind(this);
@@ -11,6 +12,7 @@ class AlbumsHandler {
     this.likeAlbumHandler = this.likeAlbumHandler.bind(this);
     this.unlikeAlbumHandler = this.unlikeAlbumHandler.bind(this);
     this.getLikesCountForAlbumHandler = this.getLikesCountForAlbumHandler.bind(this);
+    this.postCoverAlbumHandler = this.postCoverAlbumHandler.bind(this);
   }
 
   async postAlbumHandler(request, h) {
@@ -109,6 +111,30 @@ class AlbumsHandler {
         like,
       },
     };
+  }
+
+  async postCoverAlbumHandler(request, h) {
+    const { id } = request.params;
+    const { cover } = request.payload;
+
+    if (!cover || !cover.hapi) {
+      throw new Error('Invalid file upload payload');
+    }
+
+    this._validator.validateImageHeaders(cover.hapi.headers);
+
+    const filename = await this._storageService.writeFile(cover, cover.hapi);
+
+    const coverUrl = `http://${process.env.HOST}:${process.env.PORT}/albums/covers/${filename}`;
+
+    await this._service.editAlbumCoverUrl(id, coverUrl);
+
+    const response = h.response({
+      status: 'success',
+      message: 'Album cover added successfully',
+    });
+    response.code(201);
+    return response;
   }
 }
 
