@@ -52,7 +52,7 @@ const init = async () => {
   const usersService = new UsersService();
   const authenticationsService = new AuthenticationsService();
   const storageService = new StorageService(
-    path.resolve(__dirname, 'api/albums/file/images'),
+    path.resolve(__dirname, 'api/albums/file/covers'),
   );
 
   const server = Hapi.server({
